@@ -55,11 +55,12 @@ class HcalProducer : public SonicEDProducer<Client>
   			iEvent.getByToken(fTokChanInfo, hChannelInfo);
 
 			auto ninput = client_.ninput();
-			auto batchSize = client_.batchSize();
+			//auto batchSize = client_.batchSize();
+			auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
 			iInput = Input(ninput*batchSize, 0.f);
 
 			//batchSize == # of RHs in evt
-			auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
+			//auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
 
 			//fill inputs
 			unsigned int ib = 0;
@@ -90,15 +91,21 @@ class HcalProducer : public SonicEDProducer<Client>
 				}
 				ib++;		
 
+
 			}
+			for(const float &in :iInput) std::cout << in << "/";
 
 		}
 		void produce(edm::Event& iEvent, edm::EventSetup const& iSetup, Output const& iOutput) override {
 			//check the results
-			findTopN(iOutput);
-			for(unsigned int it = 0 ; it < sizeof(iOutput)/sizeof(iOutput[0]); it++){
-				std::cout << iOutput[it] << "/";
-			}
+			//findTopN(iOutput);
+			std::cout << "Output dimension: " << iOutput.size() << std::endl;
+
+			for(const float &out :iOutput) std::cout << out << "/";
+			std::cout << "\n";
+			//for(unsigned int it = 0 ; it < sizeof(iOutput)/sizeof(iOutput[0]); it++){
+		//		std::cout << iOutput[it] << "/";
+		//	}
 
 		}
 		~HcalProducer() override {}
