@@ -5,6 +5,7 @@ import os, sys, json
 options = VarParsing("analysis")
 #options.register("address", "ailab01.fnal.gov", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("address", "prp-gpu-1.t2.ucsd.edu", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("inputfile", "step2.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 #options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("timeout", 30, VarParsing.multiplicity.singleton, VarParsing.varType.int)
@@ -55,7 +56,7 @@ process.hbheprereco.saveInfos = cms.bool(True)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:../../Core/data/store_mc_RunIISpring18MiniAOD_BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph_MINIAODSIM_100X_upgrade2018_realistic_v10-v1_30000_24A0230C-B530-E811-ADE3-14187741120B.root')
-    fileNames = cms.untracked.vstring('file:step2.root')
+    fileNames = cms.untracked.vstring('file:'+options.inputfile)
 )
 
 if len(options.inputFiles)>0: process.source.fileNames = options.inputFiles

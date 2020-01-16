@@ -55,12 +55,13 @@ class HcalProducer : public SonicEDProducer<Client>
   			iEvent.getByToken(fTokChanInfo, hChannelInfo);
 
 			auto ninput = client_.ninput();
-			//auto batchSize = client_.batchSize();
-			auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
+			auto batchSize = client_.batchSize();
+			//auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
 			iInput = Input(ninput*batchSize, 0.f);
 
 			//batchSize == # of RHs in evt
 			//auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
+			std::cout << "# of RHs: " << std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end()) << std::endl;
 
 			//fill inputs
 			unsigned int ib = 0;
@@ -70,39 +71,49 @@ class HcalProducer : public SonicEDProducer<Client>
 				ieta  = (float)itRH->id().ieta();
 				iphi  = (float)itRH->id().iphi();
 
+				//std::cout << sizeof(depth) << std::endl;
 				iInput[ib*ninput+0] = ieta;
 				iInput[ib*ninput+1] = iphi; 
-				if(depth == 1.) iInput[ib*ninput+2] = 1.; else iInput[ib*ninput+2] = 0.;
-				if(depth == 2.) iInput[ib*ninput+3] = 1.; else iInput[ib*ninput+3] = 0.;
-				if(depth == 3.) iInput[ib*ninput+4] = 1.; else iInput[ib*ninput+4] = 0.;
-				if(depth == 4.) iInput[ib*ninput+5] = 1.; else iInput[ib*ninput+5] = 0.;
 
-				std::cout << "ieta/iphi/depth \t" << ieta << "/" << iphi << "/" << depth << std::endl;
+
 
   				for (HBHEChannelInfoCollection::const_iterator iter = hChannelInfo->begin(); iter != hChannelInfo->end(); iter++) {
     					const HBHEChannelInfo& pChannel(*iter);
     					const HcalDetId        pDetId = pChannel.id();
     					if(pDetId != itRH->id()) continue; 
-					iInput[ib*ninput+6] = pChannel.tsGain(0);
+					iInput[ib*ninput+2] = pChannel.tsGain(0);
 					for (unsigned int iTS=0; iTS<8; ++iTS) {
-						iInput[ib*ninput+iTS+7] = pChannel.tsRawCharge(iTS);
-						//std::cout << pChannel.tsRawCharge << "/";
+						iInput[ib*ninput+iTS+3] = (float)pChannel.tsRawCharge(iTS);
 					}
 				}
+				if(depth == 1.) iInput[ib*ninput+11] = 1.; else iInput[ib*ninput+11] = 0.;
+				if(depth == 2.) iInput[ib*ninput+12] = 1.; else iInput[ib*ninput+12] = 0.;
+				if(depth == 3.) iInput[ib*ninput+13] = 1.; else iInput[ib*ninput+13] = 0.;
+				if(depth == 4.) iInput[ib*ninput+14] = 1.; else iInput[ib*ninput+14] = 0.;
 				ib++;		
 
 
 			}
-			for(const float &in :iInput) std::cout << in << "/";
-
+			/*
+			for(unsigned ib = 0; ib < batchSize; ib++) { 
+				for(unsigned i0 = 0; i0 < ninput; i0++) { 
+					iInput[ib*ninput+0] = 1; //
+					iInput[ib*ninput+1] = 1; //
+					iInput[ib*ninput+2] = 1; //
+					iInput[ib*ninput+3] = int(rand() % 30)-15; //
+					iInput[ib*ninput+4] = int(rand() % 36)-36; //
+					iInput[ib*ninput+5] = 1;
+					for(unsigned i1 = 6; i1 < ninput; i1++) iInput[ib*ninput+i1] = float(rand() % 1000)*0.1;
+				}
+			}*/
 		}
 		void produce(edm::Event& iEvent, edm::EventSetup const& iSetup, Output const& iOutput) override {
 			//check the results
 			//findTopN(iOutput);
 			std::cout << "Output dimension: " << iOutput.size() << std::endl;
-
-			for(const float &out :iOutput) std::cout << out << "/";
-			std::cout << "\n";
+			std::cout << "Outputs: " << iOutput[0] << ", " << iOutput[1] << std::endl;
+			//for(const float &out :iOutput) std::cout << out << "/";
+			//std::cout << "\n";
 			//for(unsigned int it = 0 ; it < sizeof(iOutput)/sizeof(iOutput[0]); it++){
 		//		std::cout << iOutput[it] << "/";
 		//	}
