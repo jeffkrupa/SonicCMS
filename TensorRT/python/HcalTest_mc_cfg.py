@@ -4,17 +4,19 @@ import os, sys, json
 
 options = VarParsing("analysis")
 #options.register("address", "ailab01.fnal.gov", VarParsing.multiplicity.singleton, VarParsing.varType.string)
-options.register("address", "prp-gpu-1.t2.ucsd.edu", VarParsing.multiplicity.singleton, VarParsing.varType.string)
-options.register("inputfile", "step2.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
-#options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+#options.register("address", "prp-gpu-1.t2.ucsd.edu", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+#options.register("inputfile", "step2.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("inputfile", "/data/t3home000/jkrupa/TTbarGSDR.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("timeout", 300, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("streams", 0,    VarParsing.multiplicity.singleton, VarParsing.varType.int)
-options.register("batchsize", 1,    VarParsing.multiplicity.singleton, VarParsing.varType.int)
-options.register("modelname","facile", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("batchsize", 16000,    VarParsing.multiplicity.singleton, VarParsing.varType.int)
+options.register("modelname","facile_all", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("mode", "Async", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("hang", "", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.parseArguments()
 
 if len(options.params)>0:
@@ -60,6 +62,27 @@ process.source = cms.Source("PoolSource",
 )
 
 if len(options.inputFiles)>0: process.source.fileNames = options.inputFiles
+
+###################### Hang #################################
+
+if (options.hang != ""):
+    l = options.hang.split(":")
+    if not (len(l) == 2):
+         raise Exception("Hang improperly formatted")
+    hour = int(l[0])
+    minute = int(l[1])
+    if not (0 <= hour < 24):
+        raise Exception("Hour not in proper range")
+    if not (0 <= minute < 60):
+        raise Exception("Minute not in proper range")
+    print("Waiting until " + options.hang+".")
+    hang = True
+
+    while hang:
+        nowHour = datetime.now().hour
+        nowMinute = datetime.now().minute
+        hang = not (hour >= nowHour and minute >= nowMinute)
+    print("Signal received")
 
 ################### EDProducer ##############################
 process.HcalProducer = cms.EDProducer(allowed_modes[options.mode],

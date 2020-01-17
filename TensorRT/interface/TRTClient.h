@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <string>
-
+    
 #include "request_grpc.h"
 
 namespace nic = nvidia::inferenceserver::client;
@@ -18,6 +18,7 @@ class TRTClient : public Client {
 	public:
 		//constructor
 		TRTClient(const edm::ParameterSet& params);
+        ~TRTClient();
 
 		//helper
 		void getResults(const std::unique_ptr<nic::InferContext::Result>& result);
@@ -42,6 +43,15 @@ class TRTClient : public Client {
 		unsigned noutput_;
 		std::unique_ptr<nic::InferContext> context_;
 		std::shared_ptr<nic::InferContext::Input> nicinput_; 
+
+    private:
+        unsigned int numAsyncRemoteTime = 0;
+        unsigned int numRemoteTime = 0;
+        unsigned int sumAsyncRemoteTime = 0;
+        unsigned int sumRemoteTime = 0;
+        unsigned int countReceived = 0;
+
+        std::chrono::time_point<std::chrono::system_clock> timeCreated;
 };
 typedef TRTClient<SonicClientSync<std::vector<float>>> TRTClientSync;
 typedef TRTClient<SonicClientPseudoAsync<std::vector<float>>> TRTClientPseudoAsync;
