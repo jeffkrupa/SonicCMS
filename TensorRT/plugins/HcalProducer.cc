@@ -86,37 +86,20 @@ class HcalProducer : public SonicEDProducer<Client>
 						iInput[ib*ninput+iTS+3] = (float)pChannel.tsRawCharge(iTS);
 					}
 				}
-				if(depth == 1.) iInput[ib*ninput+11] = 1.; else iInput[ib*ninput+11] = 0.;
-				if(depth == 2.) iInput[ib*ninput+12] = 1.; else iInput[ib*ninput+12] = 0.;
-				if(depth == 3.) iInput[ib*ninput+13] = 1.; else iInput[ib*ninput+13] = 0.;
-				if(depth == 4.) iInput[ib*ninput+14] = 1.; else iInput[ib*ninput+14] = 0.;
+
+				for(unsigned int d = 0; d < 8; d++){
+					if(depth == (float)d) 	{ iInput[ib*ninput + d + 10] = 1.; }
+					else 			{ iInput[ib*ninput + d + 10] = 0.; }
+				}
 				ib++;		
 
 
 			}
-			/*
-			for(unsigned ib = 0; ib < batchSize; ib++) { 
-				for(unsigned i0 = 0; i0 < ninput; i0++) { 
-					iInput[ib*ninput+0] = 1; //
-					iInput[ib*ninput+1] = 1; //
-					iInput[ib*ninput+2] = 1; //
-					iInput[ib*ninput+3] = int(rand() % 30)-15; //
-					iInput[ib*ninput+4] = int(rand() % 36)-36; //
-					iInput[ib*ninput+5] = 1;
-					for(unsigned i1 = 6; i1 < ninput; i1++) iInput[ib*ninput+i1] = float(rand() % 1000)*0.1;
-				}
-			}*/
+		
 		}
 		void produce(edm::Event& iEvent, edm::EventSetup const& iSetup, Output const& iOutput) override {
 			//check the results
 			//findTopN(iOutput);
-			std::cout << "Output dimension: " << iOutput.size() << std::endl;
-			std::cout << "Outputs: " << iOutput[0] << ", " << iOutput[1] << std::endl;
-			//for(const float &out :iOutput) std::cout << out << "/";
-			//std::cout << "\n";
-			//for(unsigned int it = 0 ; it < sizeof(iOutput)/sizeof(iOutput[0]); it++){
-		//		std::cout << iOutput[it] << "/";
-		//	}
 
 		}
 		~HcalProducer() override {}

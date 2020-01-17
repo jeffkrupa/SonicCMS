@@ -8,7 +8,7 @@ options.register("address", "prp-gpu-1.t2.ucsd.edu", VarParsing.multiplicity.sin
 options.register("inputfile", "step2.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 #options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int)
-options.register("timeout", 30, VarParsing.multiplicity.singleton, VarParsing.varType.int)
+options.register("timeout", 300, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("streams", 0,    VarParsing.multiplicity.singleton, VarParsing.varType.int)
@@ -67,7 +67,7 @@ process.HcalProducer = cms.EDProducer(allowed_modes[options.mode],
     edmRecHitName = cms.InputTag("hbheprereco"),
     edmChanInfoName = cms.InputTag("hbheprereco"),                                           
     Client = cms.PSet(
-        ninput  = cms.uint32(15),
+        ninput  = cms.uint32(18),
         noutput = cms.uint32(1),
         batchSize = cms.uint32(options.batchsize),
         address = cms.string(options.address),
