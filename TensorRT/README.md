@@ -1,7 +1,7 @@
 Remote mode:
 ```
 cd python
-cmsRun HcalTest_mc_cfg.py maxEvents=25
+cmsRun HcalTest_mc_cfg.py maxEvents=25 port=<port> address=<server address> batchsize=16000 modelname=facile  maxEvents=10
 ```
 
 All the different client options can be tested with an additional argument:
