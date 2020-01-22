@@ -1,3 +1,10 @@
+'''
+This file just finds all the .dat files in the data directory and averages together their values,
+printing the result and saving it to averages.txt. Run it with 
+
+    python analyze.py
+'''
+
 import os
 
 
