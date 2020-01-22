@@ -53,7 +53,7 @@ TRTClient<Client>::~TRTClient() {
         msg << "Async remote time: " << (float)sumAsyncRemoteTime / numAsyncRemoteTime << " us" << std::endl;
         msg << "    Reciprocal: " << (float) numAsyncRemoteTime / sumAsyncRemoteTime * 1000 * 1000 << " s^-1" << std::endl;
         for (unsigned int i = 0; i < asyncRemoteTimeList.size(); i++) {
-            msg << "    Run " << i << ": " << asyncRemoteTimeList[i] << " s" << std::endl;
+            msg << "    Run " << i << ": " << asyncRemoteTimeList[i] << " us" << std::endl;
         }
     }
     else {
