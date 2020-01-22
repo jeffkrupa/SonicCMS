@@ -38,6 +38,7 @@ fi
 numClients="$((1+$clearSet))"
 userName="$((2+$clearSet))"
 minHostNum="$((3+$clearSet))"
+hostFile="${!minHostNum}"
 
 pathToPython="$(pwd)"
 
@@ -52,22 +53,22 @@ echo "Please enter the ssh password for ${!userName}"
 read -s password
 
 # Run the clients
-for ((hostNum=$minHostNum; hostNum <= $#; hostNum++))
-do  
-    echo "Starting host ${!hostNum}"
-    for ((i=0; i < ${!numClients}; i++))
-    do
-        echo "Starting client number $i at ${!hostNum}"
-        # sshpass -p ${password} ssh ${!userName}@${!hostNum} "sh /home/jtdinsmo/quickHcalRun.sh" &
-        { sshpass -p ${password} ssh ${!userName}@${!hostNum} bash -i <<END_SSH_COMMAND
-        source /cvmfs/cms.cern.ch/cmsset_default.sh
-        cd $pathToPython
-        cmsenv
-        cmsRun HcalTest_mc_cfg.py maxEvents=25
+while read hostNum; do
+	echo "Starting host ${hostNum}"
+	
+  	for ((i=0; i < ${!numClients}; i++))
+    	do
+          echo "Starting client number $i at ${hostNum}"
+          # sshpass -p ${password} ssh ${!userName}@${hostNum} "sh /home/jtdinsmo/quickHcalRun.sh" &
+          { sshpass -p ${password} ssh ${!userName}@${hostNum} bash -i <<END_SSH_COMMAND
+          source /cvmfs/cms.cern.ch/cmsset_default.sh
+          cd $pathToPython
+          cmsenv
+          cmsRun HcalTest_mc_cfg.py maxEvents=25 address=t3btch042.mit.edu modelname=facile_all
 END_SSH_COMMAND
-} &
-    done
-done
+	} &
+	done
+done < $hostFile
 
 echo "Done"
 
