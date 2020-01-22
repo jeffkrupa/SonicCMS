@@ -50,6 +50,7 @@ class TRTClient : public Client {
         unsigned int sumAsyncRemoteTime = 0;
         unsigned int sumRemoteTime = 0;
         unsigned int countReceived = 0;
+        std::vector<unsigned int> asyncRemoteTimeList;
 
         std::chrono::time_point<std::chrono::system_clock> timeCreated;
 };

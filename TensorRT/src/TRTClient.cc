@@ -52,6 +52,9 @@ TRTClient<Client>::~TRTClient() {
     if (numAsyncRemoteTime > 0) {
         msg << "Async remote time: " << (float)sumAsyncRemoteTime / numAsyncRemoteTime << " us" << std::endl;
         msg << "    Reciprocal: " << (float) numAsyncRemoteTime / sumAsyncRemoteTime * 1000 * 1000 << " s^-1" << std::endl;
+        for (unsigned int i = 0; i < asyncRemoteTimeList.size(); i++) {
+            msg << "    Run " << i << ": " << asyncRemoteTimeList[i] << " s" << std::endl;
+        }
     }
     else {
         msg << "numAsyncRemoteTime was zero" << std::endl;
@@ -149,8 +152,10 @@ void TRTClientAsync::predictImpl(){
 			ctx->GetAsyncRunResults(&results, &is_ready, request, false);
 			if(is_ready == false) finish(std::make_exception_ptr(cms::Exception("BadCallback") << "Callback executed before request was ready"));
 
-			auto t3 = std::chrono::high_resolution_clock::now();
-			sumAsyncRemoteTime += (unsigned int) std::chrono::duration_cast<std::chrono::microseconds>(t3-t2).count();
+	  		auto t3 = std::chrono::high_resolution_clock::now();
+            unsigned int time = std::chrono::duration_cast<std::chrono::microseconds>(t3-t2).count();
+            asyncRemoteTimeList.push_back(time);
+			sumAsyncRemoteTime += time;
             numAsyncRemoteTime++;
 
 			//check result
