@@ -28,7 +28,7 @@ class SonicEDProducer : public edm::stream::EDProducer<edm::ExternalWork, Capabi
 
 		//destructor
 		~SonicEDProducer() {
-            // Something in the following two lines causes a crash.
+            /*
             std::stringstream msg;
             msg << "Produced by SonicEDProducer" << std::endl;
             if (numLoadTime == 0) {
@@ -42,7 +42,7 @@ class SonicEDProducer : public edm::stream::EDProducer<edm::ExternalWork, Capabi
 
             std::ofstream file("./data/producer-data.dat");
             file << msg.str();
-            file.close();
+            file.close();*/
         }
 		
 		//derived classes use a dedicated acquire() interface that incorporates client_.input()

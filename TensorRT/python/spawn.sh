@@ -37,9 +37,8 @@ do
     echo "Starting host ${!hostNum}"
     for ((i=0; i < ${!numClients}; i++))
     do
-        echo $i
-        sshpass -p ${password} ssh jtdinsmo@${!hostNum} "sh /home/jtdinsmo/quickHcalRun.sh" &
-        disown
+        echo "Starting client number $i at ${!hostNum}"
+        #sshpass -p ${password} ssh jtdinsmo@${!hostNum} "sh /home/jtdinsmo/quickHcalRun.sh" &
     done
 done
 
