@@ -28,9 +28,9 @@ class ClientData:
         else:
             self.asyncRemoteTime = float(lines[asyncLine][19:-2])
             self.asyncRemoteTimeReciprocal = float(lines[asyncLine+1][16:-5])
-        self.inferencesReceived = int(lines[4][21:])
-        self.timeElapsed = float(lines[5][14:-2])
-        self.throughput = float(lines[6][11:-11])
+        self.inferencesReceived = int(lines[-4][21:])
+        self.timeElapsed = float(lines[-3][14:-2])
+        self.throughput = float(lines[-2][11:-11])
 
 def main():
     clientDatas = []
