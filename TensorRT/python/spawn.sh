@@ -59,9 +59,12 @@ while read hostNum; do
     for ((i=0; i < ${!numClients}; i++))
     do
         echo "Starting client number $i at ${hostNum}"
-        sshpass -p ${password} ssh ${!userName}@${hostNum} "sh $pathToPython/quickHcalRun.sh $pathToPython" &
+        sshpass -p ${password} ssh -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "sh $pathToPython/quickHcalRun.sh $pathToPython" nohup &
+
     done
+    disown
 done <$hostFile
+
 
 echo "Done"
 

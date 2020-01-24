@@ -1,13 +1,14 @@
 from FWCore.ParameterSet.VarParsing import VarParsing
 import FWCore.ParameterSet.Config as cms
 import os, sys, json
+from datetime import datetime
 
 options = VarParsing("analysis")
-#options.register("address", "ailab01.fnal.gov", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("address", "ailab01.fnal.gov", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 #options.register("address", "prp-gpu-1.t2.ucsd.edu", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 #options.register("inputfile", "step2.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("inputfile", "/data/t3home000/jkrupa/TTbarGSDR.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
-options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+#options.register("address", "18.4.112.82", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("timeout", 300, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string)
@@ -81,7 +82,7 @@ if (options.hang != ""):
     while hang:
         nowHour = datetime.now().hour
         nowMinute = datetime.now().minute
-        hang = not (hour >= nowHour and minute >= nowMinute)
+        hang = not (hour <= nowHour and minute <= nowMinute)
     print("Signal received")
 
 ################### EDProducer ##############################
