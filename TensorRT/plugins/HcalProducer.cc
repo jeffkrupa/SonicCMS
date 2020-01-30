@@ -2,6 +2,9 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <cmath>
+#include <utility>
+#include <algorithm>
 
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
@@ -23,6 +26,7 @@
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 
 template <typename Client>
 class HcalProducer : public SonicEDProducer<Client>
@@ -41,7 +45,7 @@ class HcalProducer : public SonicEDProducer<Client>
 		{
 
 
-
+			this->template produces<HBHERecHitCollection>();
 			//for debugging
 			this->setDebugName("HcalProducer");
 		}
@@ -58,7 +62,17 @@ class HcalProducer : public SonicEDProducer<Client>
 			auto batchSize = client_.batchSize();
 			//auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
 			iInput = Input(ninput*batchSize, 0.f);
-
+			/*for(unsigned ib = 0; ib < batchSize; ib++) { 
+				for(unsigned i0 = 0; i0 < ninput; i0++) { 
+					iInput[ib*ninput+0] = 1; //
+					iInput[ib*ninput+1] = 1; //
+					iInput[ib*ninput+2] = 1; //
+					iInput[ib*ninput+3] = int(rand() % 30)-15; //
+					iInput[ib*ninput+4] = int(rand() % 36)-36; //
+					iInput[ib*ninput+5] = 1;
+					for(unsigned i1 = 6; i1 < ninput; i1++) iInput[ib*ninput+i1] = float(rand() % 1000)*0.1;
+				}
+			}*/
 			//batchSize == # of RHs in evt
 			//auto batchSize = std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end());
 			std::cout << "# of RHs: " << std::distance(hRecHitHCAL->begin(), hRecHitHCAL->end()) << std::endl;
@@ -95,12 +109,23 @@ class HcalProducer : public SonicEDProducer<Client>
 
 
 			}
-		
 		}
 		void produce(edm::Event& iEvent, edm::EventSetup const& iSetup, Output const& iOutput) override {
+
+
+  			edm::Handle<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>> hRecHitHCAL_client;
+  			iEvent.getByToken(fTokRH,hRecHitHCAL_client);
+
+			std::unique_ptr<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>> out;
+			out = std::make_unique<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>>>();
+			for(HBHERecHitCollection::const_iterator itRH = hRecHitHCAL_client->begin(); itRH != hRecHitHCAL_client->end(); itRH++){
+				out->push_back(*itRH);
+
+			}
+
 			//check the results
 			//findTopN(iOutput);
-
+			iEvent.put(std::move(out));
 		}
 		~HcalProducer() override {}
 

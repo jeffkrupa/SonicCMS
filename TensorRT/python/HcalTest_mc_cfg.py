@@ -29,9 +29,10 @@ if len(options.params)>0:
 
 # check mode
 allowed_modes = {
-    "Async": "HcalProducerAsync",
-    "Sync": "HcalProducerSync",
-    "PseudoAsync": "HcalProducerPseudoAsync",
+      
+    "Async": "HcalPhase1ReconstructorAsync",
+    "Sync": "HcalPhase1ReconstructorSync",
+    "PseudoAsync": "HcalPhase1ReconstructorPseudoAsync",
 }
 if options.mode not in allowed_modes:
     raise ValueError("Unknown mode: "+options.mode)
@@ -49,13 +50,15 @@ process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.load('Configuration.StandardSequences.Reconstruction_cff')
+process.load('HLTrigger.Configuration.HLT_GRun_cff')
 #process.GlobalTag.globaltag = cms.string('auto:phase1_2021_realistic')#100X_upgrade2018_realistic_v10')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '')
 
 
 process.hbheprereco.saveInfos = cms.bool(True)
-
+process.hbheprereco.algorithm.useMahi = cms.bool(False)
+process.hbheprereco.algorithm.useM3 = cms.bool(False)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:../../Core/data/store_mc_RunIISpring18MiniAOD_BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph_MINIAODSIM_100X_upgrade2018_realistic_v10-v1_30000_24A0230C-B530-E811-ADE3-14187741120B.root')
@@ -86,7 +89,7 @@ if (options.hang != ""):
     print("Signal received")
 
 ################### EDProducer ##############################
-process.HcalProducer = cms.EDProducer(allowed_modes[options.mode],
+process.HcalProducer = cms.EDProducer("HcalPhase1Reconstructor",allowed_modes[options.mode],
     topN = cms.uint32(5),
     edmRecHitName = cms.InputTag("hbheprereco"),
     edmChanInfoName = cms.InputTag("hbheprereco"),                                           
@@ -113,7 +116,7 @@ process.recoPath = cms.Path(
     process.hbheprereco
 )
 
-process.raw2digi_step = cms.Path(process.RawToDigi)
+#process.raw2digi_step = cms.Path(process.RawToDigi)
 process.HcalProducer_step = cms.Path(process.HcalProducer)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 
@@ -121,8 +124,9 @@ process.out = cms.OutputModule("PoolOutputModule",                              
 )   
 process.endpath = cms.EndPath(process.out)
 
-process.schedule = cms.Schedule(process.raw2digi_step,process.digiPath,process.recoPath,process.HcalProducer_step,process.endjob_step,process.endpath)
-
+#process.schedule = cms.Schedule(process.raw2digi_step,process.digiPath,process.recoPath,process.HcalProducer_step,process.endjob_step,process.endpath)
+process.schedule = cms.Schedule(process.digiPath,process.recoPath,process.HcalProducer_step,process.endjob_step,process.endpath)
+process.schedule.extend(process.HLTSchedule)
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 keep_msgs = ['TRTClient','HcalProducer']
 for msg in keep_msgs:
@@ -140,4 +144,11 @@ if options.threads>0:
     process.options.numberOfThreads = cms.untracked.uint32(options.threads)
     process.options.numberOfStreams = cms.untracked.uint32(options.streams if options.streams>0 else 0)
 
+from HLTrigger.Configuration.customizeHLTforMC import customizeHLTforMC 
+process = customizeHLTforMC(process)
+
+process.Timing = cms.Service("Timing",
+  summaryOnly = cms.untracked.bool(False),
+  useJobReport = cms.untracked.bool(True)
+)
 
