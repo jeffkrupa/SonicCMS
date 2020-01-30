@@ -8,12 +8,14 @@ printing the result and saving it to averages.txt. Run it with
 import os
 
 
-NUM_DATAPOINTS = 7
+NUM_DATAPOINTS = 8
+
 class ClientData:
     def __init__(self, text):
         lines = text.split('\n')
-        asyncLine = 1
-        if lines[1] == "numRemoteTime was zero":
+        self.outputTime = float(lines[1][13:-3])
+        asyncLine = 2
+        if lines[2] == "numRemoteTime was zero":
             self.remoteTime = 0
             self.remoteTimeReciprocal = 0
             asyncLine += 1
@@ -43,20 +45,22 @@ def main():
 
     averages = [0]*NUM_DATAPOINTS
     for data in clientDatas:
-        averages[0] += data.remoteTime
-        averages[1] += data.remoteTimeReciprocal
-        averages[2] += data.asyncRemoteTime
-        averages[3] += data.asyncRemoteTimeReciprocal
-        averages[4] += data.inferencesReceived
-        averages[5] += data.timeElapsed
-        averages[6] += data.throughput
+        averages[0] += data.outputTime
+        averages[1] += data.remoteTime
+        averages[2] += data.remoteTimeReciprocal
+        averages[3] += data.asyncRemoteTime
+        averages[4] += data.asyncRemoteTimeReciprocal
+        averages[5] += data.inferencesReceived
+        averages[6] += data.timeElapsed
+        averages[7] += data.throughput
 
     for i in range(NUM_DATAPOINTS):
         averages[i] /= len(clientDatas)
 
-    out = "Remote time: " + str(averages[0]) + " us\n\tRemote time reciprocal: " + str(averages[1]) + " s^-1\nAsync remote time: " + str(averages[2]) + \
-            " us\n\tAsync remote time reciprocal: " + str(averages[3]) + " s^-1\nInferences received: " + str(averages[4]) + "\nTime elapsed: " + \
-            str(averages[5]) + " s\nThroughput (disregard): " + str(averages[6]) + " s^-1"
+    out = "Output time: " + str(averages[0]) + " us\nRemote time: " + str(averages[1]) + " us\n\tRemote time reciprocal: " + str(averages[2]) + \
+            " s^-1\nAsync remote time: " + str(averages[3]) + \
+            " us\n\tAsync remote time reciprocal: " + str(averages[4]) + " s^-1\nInferences received: " + str(averages[5]) + "\nTime elapsed: " + \
+            str(averages[6]) + " s\nThroughput (disregard): " + str(averages[7]) + " s^-1"
     f = open("averaged.txt", 'w')
     f.write(out)
     f.close()

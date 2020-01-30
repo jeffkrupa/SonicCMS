@@ -41,7 +41,7 @@ for f in os.listdir(args.directory):
     g = open(args.directory+f, 'r')
     text = g.read().split('\n')
     g.close()
-    runLines = text[4:-4]
+    runLines = text[5:-4]
     if numRuns == -1:
         numRuns = len(runLines)
         runTimes = [0] * numRuns
@@ -52,7 +52,7 @@ for f in os.listdir(args.directory):
     thisTime = 0
     invThisTime = 0
     lineNum = 0
-    for line in text[4:-4]:
+    for line in runLines:
         record = False
         recording = ""
         for i in range(len(line)):
