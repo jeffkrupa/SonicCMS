@@ -218,7 +218,7 @@ class HcalPhase1Reconstructor : public SonicEDProducer<Client>
 
 				iInput[ib + 0] = cell.ieta();
 				iInput[ib + 1] = cell.iphi();
-				for(unsigned int d = 1; d < 8; d++){
+				for(unsigned int d = 1; d < 5; d++){
 					if(depth == (float)d) 	{ iInput[ib*ninput + d + 10] = 1.; }
 					else 			{ iInput[ib*ninput + d + 10] = 0.; }
 				}
