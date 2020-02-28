@@ -49,7 +49,7 @@ fi
 
 mkdir -p data/${!numClients}_${!numClients}
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-cmsenv
+eval `scramv1 runtime -sh`
 
 #echo "Starting host ${!hostNum}"
 for ((i=0; i < ${!numClients}; i++))

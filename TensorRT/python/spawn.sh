@@ -40,7 +40,7 @@ userName="$((2+$clearSet))"
 minHostNum="$((3+$clearSet))"
 hostFile="${!minHostNum}"
 name=$4
-pathToPython="$(pwd)"
+pathToPython="~/CMSSW_10_6_6/src/SonicCMS/TensorRT/python/"
 
 # Clear the data directory if -c was used
 if [ $clearSet == 1 ]; then
@@ -59,8 +59,13 @@ while read hostNum; do
     for ((i=0; i < ${!numClients}; i++))
     do
         echo "Starting client number $i at ${hostNum}"
-        echo "sshpass -p "${password}" ssh -i "~/.ssh/gcloud" -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "sh $pathToPython/quickHcalRun.sh $pathToPython $(date -d "+6 hours + 2 mins" +%s) $name""
-        sshpass -p ${password} ssh "-o StrictHostKeyChecking=no ${!userName}@${hostNum} sh $pathToPython/quickHcalRun.sh $pathToPython $(date -d "+6 hours + 2 mins" +%s) $name" nohup &
+
+        echo "sshpass -p ${password} ssh -i "~/.ssh/gcloud" -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "cd $pathToPython; echo $(pwd); sh quickHcalRun.sh $pathToPython $(date -d "+0 hours" +%s) $name"" &
+        echo "hi"
+	cd ${pathToPython}
+	echo $(pwd)
+        echo "sshpass -e ssh -i ~/.ssh/gcloud -o StrictHostKeyChecking=no ${!userName}@${hostNum} 'sh ${pathToPython}/quickHcalRun.sh ${pathToPython} $(date -d "+0 hours" +%s) $name' nohup &"
+        sshpass -e ssh -i ~/.ssh/gcloud -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} 'sh ${pathToPython}/quickHcalRun.sh ${pathToPython} X'nohup &
 
     done
     disown
