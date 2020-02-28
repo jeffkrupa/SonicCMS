@@ -39,7 +39,7 @@ numClients="$((1+$clearSet))"
 userName="$((2+$clearSet))"
 minHostNum="$((3+$clearSet))"
 hostFile="${!minHostNum}"
-
+name=$4
 pathToPython="$(pwd)"
 
 # Clear the data directory if -c was used
@@ -59,12 +59,14 @@ while read hostNum; do
     for ((i=0; i < ${!numClients}; i++))
     do
         echo "Starting client number $i at ${hostNum}"
-        sshpass -p ${password} ssh -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "sh $pathToPython/quickHcalRun.sh $pathToPython" nohup &
+        echo "sshpass -p "${password}" ssh -i "~/.ssh/gcloud" -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "sh $pathToPython/quickHcalRun.sh $pathToPython $(date -d "+6 hours + 2 mins" +%s) $name""
+        sshpass -p ${password} ssh "-o StrictHostKeyChecking=no ${!userName}@${hostNum} sh $pathToPython/quickHcalRun.sh $pathToPython $(date -d "+6 hours + 2 mins" +%s) $name" nohup &
 
     done
     disown
 done <$hostFile
 
+cp DQM*root data/${name}/
 
 echo "Done"
 
