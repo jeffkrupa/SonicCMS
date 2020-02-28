@@ -62,7 +62,7 @@ while read hostNum; do
         echo "Starting client number $i at ${hostNum}"
 
         echo "sshpass -p ${password} ssh -i ~/.ssh/gcloud -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} sh ${pathToPython}/quickHcalRun.sh ${pathToPython} X &"
-        sshpass -p ${password} ssh -i ~/.ssh/gcloud -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} sh ${pathToPython}/quickHcalRun.sh ${pathToPython} X &
+        sshpass -p ${password} ssh -i ~/.ssh/gcloud -o "StrictHostKeyChecking=no" ${!userName}@${hostNum} "sh ${pathToPython}/quickHcalRun.sh ${pathToPython} 0 $name" > test.log & 
 
     done
     disown

@@ -16,6 +16,6 @@ echo date >$log
 echo "Sleeping $sleep_seconds seconds" > $log 
 echo date >$log
 echo $pwd
-cmsRun OnLine_HLT_GRun.py > $log & ##maxEvents=25 address=t3btch042.mit.edu port=8001
+cmsRun OnLine_HLT_GRun.py  ##maxEvents=25 address=t3btch042.mit.edu port=8001
 
 echo "Process on $(hostname) finished."
