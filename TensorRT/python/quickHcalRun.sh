@@ -14,6 +14,7 @@ eval `scramv1 runtime -sh`
 sleep_seconds=$(($timetoRun - $timeNow))
 echo "Sleeping $sleep_seconds seconds"  
 sleep $sleep_seconds
+echo "cmsRun OnLine_HLT_GRun_nominal.py"  ##maxEvents=25 address=t3btch042.mit.edu port=8001
 cmsRun OnLine_HLT_GRun_nominal.py  ##maxEvents=25 address=t3btch042.mit.edu port=8001
 echo "NOMINAL!"
 echo "Process on $(hostname) finished."
