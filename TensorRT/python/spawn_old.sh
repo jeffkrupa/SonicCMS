@@ -20,6 +20,10 @@ name=$5
 timetorun="$6"
 pathToPython="~/CMSSW_10_6_6/src/SonicCMS/TensorRT/python/"
 
+# update latest changes to git
+git commit -am "update"
+git push
+
 # Run the clients
 while read hostNum; do
     mkdir -p data/$name/$hostNum
@@ -30,10 +34,8 @@ while read hostNum; do
         echo "Starting client number $i at ${hostNum}"
         log="data/$name/$hostNum/$i.log"
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
-	--command=\
-	"cd $pathToPython;\
-	 git gc --prune=now; rm DQM.root; git pull;\
-         
+	--command="cd $pathToPython;\
+	 git remote prune origin; rm DQM.root; git pull;\
 	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
 
     done
