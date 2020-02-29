@@ -20,7 +20,11 @@ name=$5
 timetorun="$6"
 pathToPython="~/CMSSW_10_6_6/src/SonicCMS/TensorRT/python/"
 
+
+
 # update latest changes to git
+git gc --prune=now
+git remote prune origin
 git commit -am "update"
 git push
 
@@ -31,6 +35,7 @@ while read hostNum; do
     echo "Starting host ${hostNum}"
     for ((i=0; i < ${!numClients}; i++))
     do
+        pkill -USR1 cmsRun
         echo "Starting client number $i at ${hostNum}"
         log="data/$name/$hostNum/$i.log"
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
