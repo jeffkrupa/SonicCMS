@@ -33,6 +33,8 @@ while read hostNum; do
     mkdir -p data/$name/$hostNum
     rm -r data/$name/$hostNum/*
     echo "Starting host ${hostNum}"
+    gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
+    --command="cd $pathToPython; git pull -f"
     for ((i=0; i < ${!numClients}; i++))
     do
         pkill -USR1 cmsRun
@@ -40,7 +42,7 @@ while read hostNum; do
         log="data/$name/$hostNum/$i.log"
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
 	--command="cd $pathToPython;\
-	 rm DQM.root; git pull -f;\
+	 rm DQM.root;
 	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
 
     done
