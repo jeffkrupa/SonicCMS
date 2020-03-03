@@ -176,7 +176,6 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 			const bool skipDroppedChannels = false;
 
 			unsigned int ib = 0;
-    			std::cout << "# digis: " << std::distance(coll.begin(), coll.end()) << std::endl;
 			for (typename Collection::const_iterator it = coll.begin(); it != coll.end(); it++){
 
 
