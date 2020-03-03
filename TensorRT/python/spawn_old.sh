@@ -47,7 +47,7 @@ while read hostNum; do
 	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
 
     done
-    disown
+    #disown
 
 done <$hostFile
 
