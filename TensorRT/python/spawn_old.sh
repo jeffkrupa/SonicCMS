@@ -48,7 +48,7 @@ while read hostNum; do
         log="data/$name/$hostNum/$i.log"
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
 	--command="cd $pathToPython;\
-	 rm DQM.root;
+	 rm DQM.root;\
 	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
 
     done
