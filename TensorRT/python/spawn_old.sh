@@ -35,7 +35,6 @@ while read hostNum; do
     echo "Starting host ${hostNum}"
 
     gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -" 
-    exit
     for ((i=0; i < ${!numClients}; i++))
     do
         pkill -USR1 cmsRun
