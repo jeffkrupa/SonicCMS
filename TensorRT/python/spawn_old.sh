@@ -27,7 +27,7 @@ git gc --prune=now
 git remote prune origin
 git commit -am "update"
 git push
-
+cat hostFile
 # Run the clients
 while read hostNum; do
     mkdir -p data/$name/$hostNum
