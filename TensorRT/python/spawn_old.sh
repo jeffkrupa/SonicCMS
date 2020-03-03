@@ -29,12 +29,16 @@ git commit -am "update"
 git push
 cat $hostFile
 # Run the clients
+
+while read hostNum; do
+    gcloud compute ssh jeffkrupa@${hostNum} --zone "us-central1-a" --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -;" 
+done <$hostFile
+
 while read hostNum; do
     mkdir -p data/$name/$hostNum
     rm -r data/$name/$hostNum/*
     echo "Starting host ${hostNum}"
 
-    gcloud compute ssh jeffkrupa@${hostNum} --zone "us-central1-a" --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -;" 
 
     for ((i=0; i < ${!numClients}; i++))
     do
