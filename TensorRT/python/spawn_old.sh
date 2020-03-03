@@ -31,6 +31,7 @@ cat $hostFile
 # Run the clients
 
 while read hostNum; do
+    echo "Updating and compiling host ${hostNum}"
     gcloud compute ssh jeffkrupa@${hostNum} --zone "us-central1-a" --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -;" 
 done <$hostFile
 
