@@ -34,17 +34,17 @@ while read hostNum; do
     rm -r data/$name/$hostNum/*
     echo "Starting host ${hostNum}"
 
-    gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -"
+    gcloud alpha compute ssh jeffkrupa@${hostNum} --zone us-central1-a --command="cd $pathToPython; git pull -f; cd ../..; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b -j 8; cd -"
 
     for ((i=0; i < ${!numClients}; i++))
     do
         pkill -USR1 cmsRun
         echo "Starting client number $i at ${hostNum}"
         log="data/$name/$hostNum/$i.log"
-        #gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
-	#--command="cd $pathToPython;\
-	# rm DQM.root;
-	# sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
+        gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
+	--command="cd $pathToPython;\
+	 rm DQM.root;
+	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
 
     done
     disown
