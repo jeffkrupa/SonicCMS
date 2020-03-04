@@ -19,7 +19,7 @@ hostFile="${!minHostNum}"
 name=$5
 timetorun="$6"
 pathToPython="~/CMSSW_10_6_6/src/SonicCMS/TensorRT/python/"
-
+config=$7
 
 
 # update latest changes to git
@@ -49,7 +49,7 @@ while read hostNum; do
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
 	--command="cd $pathToPython;\
 	 rm DQM.root;\
-	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name" &> $log &
+	 sh $pathToPython/quickHcalRun.sh $pathToPython $timetorun $name $config" &> $log &
 
     done
 

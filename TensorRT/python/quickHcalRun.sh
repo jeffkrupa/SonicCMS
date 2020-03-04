@@ -2,6 +2,7 @@ echo "ssh-ing into $(hostname) succeeded."
 cd $1
 timetoRun=$(date -d "$2" +%s)
 name=$3
+config=$4
 timeNow=$(date +%s)
 echo $timetoRun
 echo $timeNow
@@ -15,7 +16,8 @@ sleep_seconds=$(($timetoRun - $timeNow))
 echo "Sleeping $sleep_seconds seconds"  
 sleep $sleep_seconds
 
-cmsRun OnLine_HLT_GRun.py
+echo "EXECUTING cmsRun $4 at $date"
+cmsRun $4 #OnLine_HLT_GRun_nominal_2.py
 
 mkdir data/$name/$hostname
 cp DQM* data/$name/$hostname
