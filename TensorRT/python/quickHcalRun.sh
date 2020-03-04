@@ -16,8 +16,8 @@ echo "Sleeping $sleep_seconds seconds"
 sleep $sleep_seconds
 cmsRun OnLine_HLT_GRun.py
 
-file=DQM*.root
-mv $file data/$name/$file
+
+cp DQM* data/$name/
 
 #cmsRun HcalTest_mc_cfg.py maxEvents=10000 address=104.198.183.53 inputfile=TRK-Run3Summer19DR-00017_step1_test.root threads=4 ##maxEvents=25 address=t3btch042.mit.edu port=8001
 echo "HCALTEST!"
