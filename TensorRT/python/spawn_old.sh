@@ -32,7 +32,7 @@ cat $hostFile
 
 while read hostNum; do
     echo "Updating and compiling host ${hostNum}"
-    gcloud compute ssh jeffkrupa@${hostNum} --zone "us-central1-a" --command="cd $pathToPython/../../; git pull -f; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b; pkill -USR1 cmsRun" -- -n
+    gcloud compute ssh jeffkrupa@${hostNum} --zone "us-central1-a" --command="cd $pathToPython/../../; git pull -f; source /cvmfs/cms.cern.ch/cmsset_default.sh; cmsenv; scram b; pkill -USR1 cmsRun; cd $pathToPython; rm DQM*root" -- -n
 done <$hostFile
 
 while read hostNum; do
