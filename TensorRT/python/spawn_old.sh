@@ -44,7 +44,7 @@ while read hostNum; do
 
     for ((i=0; i < ${!numClients}; i++))
     do
-        pkill -USR1 cmsRun
+        #pkill -USR1 cmsRun
         echo "Starting client number $i at ${hostNum}"
         log="data/$name/$hostNum/$i.log"
         gcloud compute ssh jeffkrupa@${hostNum} --zone us-central1-a\
