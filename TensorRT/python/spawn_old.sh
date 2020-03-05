@@ -21,6 +21,7 @@ timetorun="$6"
 pathToPython="~/CMSSW_10_6_6/src/SonicCMS/TensorRT/python/"
 config=$7
 
+gcloud compute config-ssh
 
 # update latest changes to git
 git gc --prune=now
