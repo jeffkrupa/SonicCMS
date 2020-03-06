@@ -226,7 +226,7 @@ process.recoPath = cms.Path(
 )
 
 #process.raw2digi_step = cms.Path(process.RawToDigi)
-process.HcalProducer_step = cms.Path(process.hltHbhePhase1Reco) #process.hbheprereco)#process.HBHEPhase1Reconstructor)
+process.HcalProducer_step = cms.Path(process.HcalProducer) #process.hbheprereco)#process.HBHEPhase1Reconstructor)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 
 process.MessageLogger.categories.append('FastReport')
