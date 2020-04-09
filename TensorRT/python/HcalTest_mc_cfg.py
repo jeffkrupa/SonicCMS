@@ -59,7 +59,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2021_realistic', '
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:../../Core/data/store_mc_RunIISpring18MiniAOD_BulkGravTohhTohbbhbb_narrow_M-2000_13TeV-madgraph_MINIAODSIM_100X_upgrade2018_realistic_v10-v1_30000_24A0230C-B530-E811-ADE3-14187741120B.root')
-    fileNames = cms.untracked.vstring(['file:'+options.inputfile]*20),
+    fileNames = cms.untracked.vstring(['file:'+options.inputfile]*100),
     duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
@@ -87,7 +87,7 @@ if (options.hang != ""):
     print("Signal received")
 
 ################### EDProducer ##############################
-process.HcalProducer = cms.EDProducer("HcalPhase1Reconstructor_testSync",
+process.HcalProducer = cms.EDProducer("HcalPhase1Reconstructor_testPseudoAsync",
     sipmQTSShift = cms.uint32(0),
     sipmQNTStoSum = cms.uint32(3),
     topN = cms.uint32(5),
@@ -95,7 +95,7 @@ process.HcalProducer = cms.EDProducer("HcalPhase1Reconstructor_testSync",
     edmChanInfoName = cms.InputTag("hbheprereco"),                                           
     simHcalDigiName = cms.untracked.InputTag("simHcalDigis","HBHEQIE11DigiCollection"),
     Client = cms.PSet(
-        ninput  = cms.uint32(15),
+        ninput  = cms.uint32(18),
         noutput = cms.uint32(1),
         batchSize = cms.uint32(options.batchsize),
         address = cms.string(options.address),
@@ -213,10 +213,10 @@ process.hltHbhePhase1Reco = cms.EDProducer( "HBHEPhase1Reconstructor",
     recoParamsFromDB = cms.bool( True )
 )
 
-#process.hbheprereco.digiLabelQIE11 = cms.InputTag("simHcalUnsuppressedDigis","HBHEQIE11DigiCollection")
-#process.hbheprereco.processQIE8 = cms.bool(False)
-#process.hbheprereco.processQIE11 = cms.bool(True)
-#process.hbheprereco.algorithm.useMahi = cms.bool(True)
+process.hbheprereco.digiLabelQIE11 = cms.InputTag("simHcalDigis","HBHEQIE11DigiCollection")
+process.hbheprereco.processQIE8 = cms.bool(False)
+process.hbheprereco.processQIE11 = cms.bool(True)
+process.hbheprereco.algorithm.useMahi = cms.bool(True)
 
 process.digiPath = cms.Path(
     process.hcalDigis
@@ -225,16 +225,16 @@ process.recoPath = cms.Path(
     process.hbheprereco
 )
 
-#process.raw2digi_step = cms.Path(process.RawToDigi)
 process.HcalProducer_step = cms.Path(process.HcalProducer) #process.hbheprereco)#process.HBHEPhase1Reconstructor)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 
 process.MessageLogger.categories.append('FastReport')
 
 #process.schedule = cms.Schedule(process.raw2digi_step,process.digiPath,process.recoPath,process.HcalProducer_step,process.endjob_step,process.endpath)
-process.schedule = cms.Schedule(process.HcalProducer_step,process.endjob_step)
+process.schedule = cms.Schedule(process.recoPath, process.endjob_step)
+#process.schedule = cms.Schedule(process.HcalProducer_step,process.endjob_step)
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
-keep_msgs = ['TRTClient','HcalProducer']
+'''keep_msgs = ['TRTClient','HcalProducer']
 for msg in keep_msgs:
     process.MessageLogger.categories.append(msg)
     setattr(process.MessageLogger.cerr,msg,
@@ -243,7 +243,7 @@ for msg in keep_msgs:
             limit = cms.untracked.int32(10000000),
         )
     )
-
+'''
 if options.threads>0:
     if not hasattr(process,"options"):
         process.options = cms.untracked.PSet()

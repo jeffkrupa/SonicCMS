@@ -5,7 +5,7 @@
 #include <cmath>
 #include <utility>
 #include <algorithm>
-
+#include <fstream>
 #include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
@@ -133,8 +133,8 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 			sipmQTSShift_(cfg.getParameter<unsigned>("sipmQTSShift")),
 			sipmQNTStoSum_(cfg.getParameter<unsigned>("sipmQNTStoSum")), 
 			topN_(cfg.getParameter<unsigned>("topN")),  
-			//fDigiName(cfg.getParameter<edm::InputTag>("digiLabelQIE11")),
-			fDigiName(cfg.getUntrackedParameter<edm::InputTag>("simHcalDigiName")),
+			fDigiName(cfg.getParameter<edm::InputTag>("digiLabelQIE11")),
+			//fDigiName(cfg.getUntrackedParameter<edm::InputTag>("simHcalDigiName")),
 			fRHName(cfg.getParameter<edm::InputTag>("edmRecHitName")),   
 			fChanInfoName(cfg.getParameter<edm::InputTag>("edmChanInfoName")), 
 			fTokRH(this->template consumes<edm::SortedCollection<HBHERecHit,edm::StrictWeakOrdering<HBHERecHit>> >(fRHName)), 
@@ -190,7 +190,7 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 	   			      subdet == HcalSubdetector::HcalEndcap ||
     			              subdet == HcalSubdetector::HcalOuter))
         		    	continue;
-			
+		
 				const HcalCalibrations& calib = cond.getHcalCalibrations(cell);
 			        const HcalQIECoder* channelCoder = cond.getHcalCoder(cell);
 			        const HcalQIEShape* shape = cond.getHcalShape(channelCoder);
@@ -210,17 +210,19 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 
 
 				
+
+				iInput[ib*ninput + 0] = (float)cell.ieta();
+				iInput[ib*ninput + 1] = (float)cell.iphi();
 				for (int inputTS = 0; inputTS < nCycles; ++inputTS){
 					auto s(frame[inputTS]);
 					const uint8_t adc = s.adc();
 					const int capid = s.capid();
+			        	const double gain = calib.respcorrgain(capid);	
+					iInput[ib*ninput + 2] = (float)gain;
 				        const double rawCharge = rcfs.getRawCharge(cs[inputTS], calib.pedestal(capid));
-					iInput[ib*ninput+inputTS+2] = (float)rawCharge;
+					iInput[ib*ninput+inputTS+3] = ((float)rawCharge);
 				}
-
-				iInput[ib + 0] = cell.ieta();
-				iInput[ib + 1] = cell.iphi();
-				for(unsigned int d = 1; d < 5; d++){
+				for(unsigned int d = 1; d < 8; d++){
 					if(depth == (float)d) 	{ iInput[ib*ninput + d + 10] = 1.; }
 					else 			{ iInput[ib*ninput + d + 10] = 0.; }
 				}
@@ -234,15 +236,19 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 
   			std::unique_ptr<HBHERecHitCollection> out;
 			out = std::make_unique<HBHERecHitCollection>();
-			
+		 	//std::cout <<"fill outputs" << std::endl;	
 			unsigned int ib = 0;
 			for(HBHERecHitCollection::const_iterator it = tmp->begin(); it != tmp->end(); it++){
+ 				//std::cout << iOutput[ib] << std::endl;
 				//std::cout << iOutput[ib] << std::endl;
-				HBHERecHit rhout = HBHERecHit(it->id(),0.5,0.f,0.f);
+				float rh_e = iOutput[ib];
+				if (rh_e < 0.01) rh_e = 0.01;
+				else if (rh_e > 1000.) rh_e = 1000.;
+				if (it->id().depth() == 1) rh_e = rh_e*5./12.;
+				HBHERecHit rhout = HBHERecHit(it->id(),rh_e,0.f,0.f);
 				out->push_back(rhout);
 				ib++;
 			}
-
 			iEvent.put(std::move(out));
 		}
 		~HcalPhase1Reconstructor_test() override {}
@@ -269,7 +275,34 @@ class HcalPhase1Reconstructor_test : public SonicEDProducer<Client>
 
 		using SonicEDProducer<Client>::client_;
 		//Just putting something in for the hell of it
-
+                template<unsigned int B, unsigned int I>
+                unsigned short f_to_ui(float f) {
+                    bool isPos = f > 0.;
+                    short tmpIs = int(fabs(f));
+                    unsigned short tmpI = tmpIs;
+                    if (not isPos) {
+		      //unsigned int comp = ((unsigned int)((1<<(sizeof(unsigned int)*8-I+1))-1)<<I);
+		      unsigned short comp = ((unsigned short)((1<<(sizeof(unsigned short)*4-I+1))-1)<<I);
+		      tmpI = -tmpIs;
+		      tmpI = tmpI-comp;
+                    }
+                    float tmpF = fabs(f) - float(tmpIs);
+                    unsigned short fracs = tmpF*float(1<<(B-I));
+                    unsigned short val = (tmpI << (B-I)) + fracs;
+                    return val;
+                }
+                template<unsigned int B, unsigned int I>
+                float ui_to_f(const unsigned short ui) {
+		  unsigned short i = ui >> (B-I);
+		  unsigned short mask = (1 << (B-I))-1;
+		  unsigned short dec = ui & mask;
+		  float lDec = float(dec)/float(1 << (B-I));
+		  return float(i)+lDec;
+		}
+                uint32_t merge(unsigned short iA,unsigned short iB) {
+		  uint32_t result = (uint32_t) iA << 16 | iB;
+		  return result;
+		}  
 };
 
 
