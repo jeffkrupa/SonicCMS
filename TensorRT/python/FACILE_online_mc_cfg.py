@@ -4,7 +4,7 @@ import os, sys, json
 from datetime import datetime
 
 options = VarParsing("analysis")
-options.register("address", "35.226.56.201", VarParsing.multiplicity.singleton, VarParsing.varType.string)
+options.register("address", "34.66.125.42", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("inputfile", "root://cmsxrootd.fnal.gov//store/relval/CMSSW_10_6_0/RelValTTbar_13/GEN-SIM-DIGI-RAW/106X_upgrade2021_realistic_v5_LowSigmaZGTv5-v1/10000/42E44201-9A4C-C74E-838B-2215221081BC.root", VarParsing.multiplicity.singleton, VarParsing.varType.string)
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int)
 options.register("timeout", 300, VarParsing.multiplicity.singleton, VarParsing.varType.int)
@@ -38,11 +38,10 @@ from Configuration.StandardSequences.Eras import eras
 #process.load('HLTrigger.Configuration.HLT_GRun_cff')
 
 
-import sys,os
-sys.path.insert(0,os.path.expandvars("$CMSSW_RELEASE_BASE/src/SonicCMS/TensorRT/python"))
-from HLT_cff import process
+sys.path.insert(0,os.path.expandvars("$CMSSW_RELEASE_BASE/src/HLTrigger/Configuration/test"))
+from OnLine_HLT_GRun import process
 
-process.hltHbherecoclient = cms.EDProducer(allowed_modes[options.mode],
+process.hltHbhereco = cms.EDProducer(allowed_modes[options.mode],
     sipmQTSShift = cms.uint32(0),
     sipmQNTStoSum = cms.uint32(3),
     topN = cms.uint32(5),
@@ -60,6 +59,8 @@ process.hltHbherecoclient = cms.EDProducer(allowed_modes[options.mode],
         modelName = cms.string(options.modelname)
     )
 )
+
+
 # add specific customizations
 _customInfo = {}
 _customInfo['menuType'  ]= "GRun"
