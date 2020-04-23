@@ -39,14 +39,15 @@ for ievent,event in enumerate(events):
          faci_e_all.append(iF.energy())
          mahi_e_all.append(iM.energy())
 
-#h,_,_,_ = plt.hist2d(faci_e, mahi_e, bins=40,range=[[0,50],[0,50]])
+import matplotlib.colors as mcolors
+h,_,_,_ = plt.hist2d(faci_e_all, mahi_e_all, bins=50,range=[[0,50],[0,50]],norm=mcolors.PowerNorm(0.1))
 
-plt.scatter(faci_e_1,mahi_e_1,c='black',label='depth=1',marker='o',s=10)
-plt.scatter(faci_e_all,mahi_e_all,c='red',label='depth>1',marker='o',s=10)
+#plt.scatter(faci_e_1,mahi_e_1,c='black',label='depth=1',marker='o',s=10,alpha=0.5)
+#plt.scatter(faci_e_all,mahi_e_all,c='red',label='depth>1',marker='o',s=10,alpha=0.5)
 
 plt.legend(loc='upper right')
-plt.xlim([0,100])
-plt.ylim([0,100])
+plt.xlim([0,50])
+plt.ylim([0,50])
 plt.xlabel('facile [GeV]')
 plt.ylabel('mahi [GeV]')
 plt.savefig('test.png')

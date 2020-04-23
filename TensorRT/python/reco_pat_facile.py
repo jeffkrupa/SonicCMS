@@ -131,7 +131,7 @@ process.hbheprereco = cms.EDProducer( "HcalPhase1Reconstructor_testAsync",
     edmChanInfoName = cms.InputTag("hltHbhePhase1Reco"),
     simHcalDigiName = cms.untracked.InputTag("simHcalDigis","HBHEQIE11DigiCollection"),
     Client = cms.PSet(
-        ninput  = cms.uint32(18),
+        ninput  = cms.uint32(47),
         noutput = cms.uint32(1),
         batchSize = cms.uint32(16000),
         address = cms.string("35.238.193.145"), ## 4GPU HEPCloud
@@ -139,7 +139,7 @@ process.hbheprereco = cms.EDProducer( "HcalPhase1Reconstructor_testAsync",
         # CHA-GPU Harris-Group address = cms.string("130.211.238.241"),
         port = cms.uint32(8001),
         timeout = cms.uint32(30),
-        modelName = cms.string("facile_all"),
+        modelName = cms.string("facile_all_v2"),
     )
 )
 
