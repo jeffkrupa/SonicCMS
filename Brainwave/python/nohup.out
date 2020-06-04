@@ -1,0 +1,7 @@
+----- Begin Fatal Exception 02-Jun-2020 19:33:32 EDT-----------------------
+An exception of category 'StdException' occurred while
+   [0] Processing the python configuration file named reco_pat.py
+Exception Message:
+A std::exception was thrown.
+File "reco_pat.py" could not be opened!
+----- End Fatal Exception -------------------------------------------------

@@ -97,13 +97,15 @@ class JetImageProducer : public SonicEDProducer<Client>
 			}
 
 			// convert image to tensor
-			iInput = Input(tensorflow::DT_FLOAT, { 1, npix, npix, 3 });
+			iInput = Input(tensorflow::DT_FLOAT, { 5, npix, npix, 3 });
 			auto input_map = iInput.template tensor<float, 4>();
 			for (unsigned itf = 0; itf < npix; itf++){
 				for (unsigned jtf = 0; jtf < npix; jtf++){
-					input_map(0,itf,jtf,0) = image2D[itf][jtf];
-					input_map(0,itf,jtf,1) = image2D[itf][jtf];
-					input_map(0,itf,jtf,2) = image2D[itf][jtf];
+  					for (unsigned ib = 0; ib < 5; ib++){
+					input_map(ib,itf,jtf,0) = image2D[itf][jtf];
+					input_map(ib,itf,jtf,1) = image2D[itf][jtf];
+					input_map(ib,itf,jtf,2) = image2D[itf][jtf];
+					}
 				}
 			}
 		}
@@ -161,3 +163,4 @@ template<> std::string JetImageProducerLocal::getCfiName() { return "JetImagePro
 
 DEFINE_FWK_MODULE(JetImageProducerRemote);
 DEFINE_FWK_MODULE(JetImageProducerLocal);
+
